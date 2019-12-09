@@ -6,16 +6,10 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
-	"github.com/sirupsen/logrus"
 
 	"github.com/mr-fame/pd-dome-api/customer"
-	"github.com/mr-fame/pd-dome-api/models"
+	"github.com/mr-fame/pd-dome-api/utils"
 )
-
-// ResponseError represent the reseponse error struct
-type ResponseError struct {
-	Message string `json:"message"`
-}
 
 // CustomerHandler represent the httphandler for customer
 type CustomerHandler struct {
@@ -39,38 +33,23 @@ func (ctm *CustomerHandler) FetchCustomer(c echo.Context) error {
 	limit, _ := strconv.Atoi(limitStr)
 	offsetStr := c.QueryParam("offset")
 	offset, _ := strconv.Atoi(offsetStr)
-	print(offset)
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	customers, nextOffset, err := ctm.CUsecase.Fetch(ctx, offset, limit)
-
+	_ = nextOffset
 	if err != nil {
-		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
+		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
+			Message: err.Error(),
+		})
 	}
-	var content struct {
-		Items      []*models.Customer `json:"items"`
-		NextOffset int                `json:"nextOffset"`
-	}
-	content.Items = customers
-	content.NextOffset = nextOffset
-	return c.JSON(http.StatusOK, &content)
-}
 
-func getStatusCode(err error) int {
-	if err == nil {
-		return http.StatusOK
-	}
-	logrus.Error(err)
-	switch err {
-	case models.ErrInternalServerError:
-		return http.StatusInternalServerError
-	case models.ErrNotFound:
-		return http.StatusNotFound
-	case models.ErrConflict:
-		return http.StatusConflict
-	default:
-		return http.StatusInternalServerError
-	}
+	title := "Customers"
+	description := "Get customer"
+	return c.JSON(http.StatusOK, utils.DataObject{
+		Title:       &title,
+		Description: &description,
+		Items:       customers,
+	})
 }
