@@ -21,17 +21,29 @@ func NewCustomerUsecase(ctm customer.Repository, timeout time.Duration) customer
 	}
 }
 
-func (ctm *customerUsecase) Fetch(ctx context.Context, offset int, limit int) ([]*models.Customer, int, error) {
-	if limit == 0 {
-		limit = 20
-	}
-
+func (ctm *customerUsecase) Fetch(ctx context.Context, offset int, limit int) ([]*models.Customer, *int, error) {
 	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
 	defer cancel()
 
-	customers, nextOffset, err := ctm.customerRepo.Fetch(offset, limit)
+	customers, err := ctm.customerRepo.Fetch(offset, limit)
 	if err != nil {
-		return nil, 0, err
+		return nil, nil, err
 	}
-	return customers, nextOffset, nil
+
+	nextOffset := offset + limit
+	if nextOffset == 0 || len(customers) <= nextOffset {
+		return customers, nil, nil
+	}
+	return customers, &nextOffset, nil
+}
+
+func (ctm *customerUsecase) GetByID(ctx context.Context, id int) (*models.Customer, error) {
+	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
+	defer cancel()
+	println(id)
+	customer, err := ctm.customerRepo.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
 }

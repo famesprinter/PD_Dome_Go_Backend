@@ -13,7 +13,6 @@ type DataObject struct {
 	Description *string     `json:"description,omitempty"`
 	Item        interface{} `json:"item,omitempty"`
 	Items       interface{} `json:"items,omitempty"`
-	NextOffset  int         `json:"nextOffset,omitempty"`
 }
 
 // ResponseError represent the reseponse error struct

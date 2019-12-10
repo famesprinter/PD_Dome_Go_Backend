@@ -15,14 +15,26 @@ func NewMysqlCustomerRepository(Conn *gorm.DB) customer.Repository {
 	return &mysqlCustomerRepository{Conn}
 }
 
-func (m *mysqlCustomerRepository) Fetch(offset int, limit int) (res []*models.Customer, nextOffset int, err error) {
+func (m *mysqlCustomerRepository) Fetch(offset int, limit int) ([]*models.Customer, error) {
 	customers := []*models.Customer{}
-	m.Conn.Limit(limit).Offset(offset).Find(&customers)
-	nextOffset = 0
-	if offset == 0 {
-		nextOffset = limit
-	} else {
-		nextOffset = offset + limit
+	if limit == 0 {
+		limit = -1
 	}
-	return customers, nextOffset, nil
+	// db := m.Conn.Limit(limit).Offset(offset).Find(&customers)
+	db := m.Conn.Find(&customers)
+
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	return customers, nil
+}
+
+func (m *mysqlCustomerRepository) GetByID(id int) (*models.Customer, error) {
+	customer := models.Customer{}
+	db := m.Conn.First(&customer, id)
+
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	return &customer, nil
 }

@@ -6,8 +6,8 @@ import (
 
 // Repository represent the article's repository contract
 type Repository interface {
-	Fetch(offset int, limit int) (res []*models.Customer, nextOffset int, err error)
-	// GetByID(ctx context.Context, id int) (*models.Customer, error)
+	Fetch(offset int, limit int) ([]*models.Customer, error)
+	GetByID(id int) (*models.Customer, error)
 	// Update(ctx context.Context, c *models.Customer) error
 	// Store(ctx context.Context, c *models.Customer) error
 	// Delete(ctx context.Context, id int) error
