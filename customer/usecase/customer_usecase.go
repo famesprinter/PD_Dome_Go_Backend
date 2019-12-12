@@ -40,10 +40,21 @@ func (ctm *customerUsecase) Fetch(ctx context.Context, offset int, limit int) ([
 func (ctm *customerUsecase) GetByID(ctx context.Context, id int) (*models.Customer, error) {
 	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
 	defer cancel()
-	println(id)
+
 	customer, err := ctm.customerRepo.GetByID(id)
 	if err != nil {
 		return nil, err
 	}
 	return customer, nil
+}
+
+func (ctm *customerUsecase) Create(ctx context.Context, c *models.Customer) error {
+	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
+	defer cancel()
+
+	err := ctm.customerRepo.Create(c)
+	if err != nil {
+		return err
+	}
+	return nil
 }

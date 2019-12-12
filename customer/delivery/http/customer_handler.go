@@ -6,8 +6,10 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
+	validator "gopkg.in/go-playground/validator.v10"
 
 	"github.com/mr-fame/pd-dome-api/customer"
+	"github.com/mr-fame/pd-dome-api/models"
 	"github.com/mr-fame/pd-dome-api/utils"
 )
 
@@ -22,7 +24,7 @@ func NewCustomerHandler(e *echo.Echo, us customer.Usecase) {
 		CUsecase: us,
 	}
 	e.GET("/customers", handler.FetchCustomer)
-	// e.POST("/customers", handler.Store)
+	e.POST("/customers", handler.Create)
 	e.GET("/customers/:id", handler.GetByID)
 	// e.DELETE("/customers/:id", handler.Delete)
 }
@@ -61,7 +63,7 @@ func (ctm *CustomerHandler) GetByID(c echo.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	println(id)
+
 	customer, err := ctm.CUsecase.GetByID(ctx, id)
 	if err != nil {
 		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
@@ -76,4 +78,47 @@ func (ctm *CustomerHandler) GetByID(c echo.Context) error {
 		Description: &description,
 		Item:        customer,
 	})
+}
+
+// Create will create the customer by given request body
+func (ctm *CustomerHandler) Create(c echo.Context) error {
+	var customer models.Customer
+	err := c.Bind(&customer)
+	if err != nil {
+		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
+			Message: err.Error(),
+		})
+	}
+
+	if ok, err := isRequestValid(&customer); !ok {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	ctx := c.Request().Context()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	err = ctm.CUsecase.Create(ctx, &customer)
+
+	if err != nil {
+		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
+			Message: err.Error(),
+		})
+	}
+
+	title := "Customers"
+	description := "Create customer success"
+	return c.JSON(http.StatusOK, utils.DataObject{
+		Title:       &title,
+		Description: &description,
+	})
+}
+
+func isRequestValid(m *models.Customer) (bool, error) {
+	validate := validator.New()
+	err := validate.Struct(m)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

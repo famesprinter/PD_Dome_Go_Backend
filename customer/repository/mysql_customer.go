@@ -38,3 +38,12 @@ func (m *mysqlCustomerRepository) GetByID(id int) (*models.Customer, error) {
 	}
 	return &customer, nil
 }
+
+func (m *mysqlCustomerRepository) Create(ctm *models.Customer) error {
+	db := m.Conn.Create(ctm)
+
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
+}

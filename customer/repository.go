@@ -8,7 +8,7 @@ import (
 type Repository interface {
 	Fetch(offset int, limit int) ([]*models.Customer, error)
 	GetByID(id int) (*models.Customer, error)
+	Create(ctm *models.Customer) error
 	// Update(ctx context.Context, c *models.Customer) error
-	// Store(ctx context.Context, c *models.Customer) error
 	// Delete(ctx context.Context, id int) error
 }
