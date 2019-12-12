@@ -58,3 +58,14 @@ func (ctm *customerUsecase) Create(ctx context.Context, c *models.Customer) erro
 	}
 	return nil
 }
+
+func (ctm *customerUsecase) Update(ctx context.Context, c *models.Customer) error {
+	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
+	defer cancel()
+
+	err := ctm.customerRepo.Update(c)
+	if err != nil {
+		return err
+	}
+	return nil
+}

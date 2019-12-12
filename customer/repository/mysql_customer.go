@@ -47,3 +47,12 @@ func (m *mysqlCustomerRepository) Create(ctm *models.Customer) error {
 	}
 	return nil
 }
+
+func (m *mysqlCustomerRepository) Update(ctm *models.Customer) error {
+	db := m.Conn.Model(ctm).Updates(ctm)
+
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
+}
