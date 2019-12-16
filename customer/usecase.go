@@ -12,5 +12,5 @@ type Usecase interface {
 	GetByID(ctx context.Context, id int) (*models.Customer, error)
 	Create(ctx context.Context, c *models.Customer) error
 	Update(ctx context.Context, c *models.Customer) error
-	// Delete(ctx context.Context, id int) error
+	Delete(ctx context.Context, id int) error
 }

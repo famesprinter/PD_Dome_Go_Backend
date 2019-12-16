@@ -10,5 +10,5 @@ type Repository interface {
 	GetByID(id int) (*models.Customer, error)
 	Create(ctm *models.Customer) error
 	Update(ctm *models.Customer) error
-	// Delete(ctx context.Context, id int) error
+	Delete(id int) error
 }

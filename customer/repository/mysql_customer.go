@@ -56,3 +56,12 @@ func (m *mysqlCustomerRepository) Update(ctm *models.Customer) error {
 	}
 	return nil
 }
+
+func (m *mysqlCustomerRepository) Delete(id int) error {
+	db := m.Conn.Where("id = ?", id).Delete(&models.Customer{})
+
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
+}

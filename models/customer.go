@@ -12,4 +12,5 @@ type Customer struct {
 	IDCardImageURL string    `json:"idCardImageURL"`
 	CreatedAt      time.Time `gorm:"DEFAULT:now()" json:"createdAt,omitempty"`
 	UpdatedAt      time.Time `gorm:"DEFAULT:now()" json:"updatedAt"`
+	DeletedAt      time.Time `gorm:"DEFAULT:now()" json:"deletedAt"`
 }

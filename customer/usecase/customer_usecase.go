@@ -69,3 +69,14 @@ func (ctm *customerUsecase) Update(ctx context.Context, c *models.Customer) erro
 	}
 	return nil
 }
+
+func (ctm *customerUsecase) Delete(ctx context.Context, id int) error {
+	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
+	defer cancel()
+
+	err := ctm.customerRepo.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

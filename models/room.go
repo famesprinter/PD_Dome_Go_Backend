@@ -11,4 +11,5 @@ type Room struct {
 	LevelID        int       `gorm:"ForeignKey" json:"levelID,omitempty"`
 	CreatedAt      time.Time `gorm:"DEFAULT:now()" json:"createdAt,omitempty"`
 	UpdatedAt      time.Time `gorm:"DEFAULT:now()" json:"updatedAt"`
+	DeletedAt      time.Time `gorm:"DEFAULT:now()" json:"deletedAt"`
 }

@@ -27,8 +27,7 @@ func NewCustomerHandler(e *echo.Echo, us customer.Usecase) {
 	e.GET("/customers/:id", handler.GetByID)
 	e.POST("/customers/create", handler.Create)
 	e.POST("/customers/update/:id", handler.Update)
-
-	// e.DELETE("/customers/:id", handler.Delete)
+	e.DELETE("/customers/delete/:id", handler.Delete)
 }
 
 // FetchCustomer will fetch the customer based on given params
@@ -137,7 +136,6 @@ func (ctm *CustomerHandler) Update(c echo.Context) error {
 
 	customer.ID = id
 	err = ctm.CUsecase.Update(ctx, &customer)
-
 	if err != nil {
 		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
 			Message: err.Error(),
@@ -146,6 +144,40 @@ func (ctm *CustomerHandler) Update(c echo.Context) error {
 
 	title := "Customers"
 	description := "Update customer success"
+	return c.JSON(http.StatusOK, utils.DataObject{
+		Title:       &title,
+		Description: &description,
+	})
+}
+
+// Delete will delelete the customer by given request body
+func (ctm *CustomerHandler) Delete(c echo.Context) error {
+	var customer models.Customer
+	id, _ := strconv.Atoi(c.Param("id"))
+	err := c.Bind(&customer)
+	if err != nil {
+		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
+			Message: err.Error(),
+		})
+	}
+
+	if ok, err := isRequestValid(&customer); !ok {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	ctx := c.Request().Context()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	err = ctm.CUsecase.Delete(ctx, id)
+	if err != nil {
+		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
+			Message: err.Error(),
+		})
+	}
+
+	title := "Customers"
+	description := "Delete customer success"
 	return c.JSON(http.StatusOK, utils.DataObject{
 		Title:       &title,
 		Description: &description,
