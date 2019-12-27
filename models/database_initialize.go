@@ -50,6 +50,8 @@ func ConnectMysqlDB(isInit bool, isAutoMigrate bool) *gorm.DB {
 func autoMigrate() {
 	fmt.Println("Migrating...")
 
+	// Create Table
+	// db.Exec(`ALTER DATABASE ` + `pd_dorm_db` + ` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;`)
 	// Customer
 	db.AutoMigrate(&Customer{})
 	// Room
@@ -57,6 +59,9 @@ func autoMigrate() {
 	db.AutoMigrate(&Rent{})
 	db.AutoMigrate(&InsuranceFee{})
 	db.AutoMigrate(&Level{})
+	// Customer + Room
+	db.AutoMigrate(&CustomerRoom{})
+	db.AutoMigrate(&CustomerRoomStatus{})
 }
 
 func addForeignKey() {
@@ -66,6 +71,9 @@ func addForeignKey() {
 	db.Model(&Room{}).AddForeignKey("rent_id", "rents(id)", "RESTRICT", "RESTRICT")
 	db.Model(&Room{}).AddForeignKey("insurance_fee_id", "insurance_fees(id)", "RESTRICT", "RESTRICT")
 	db.Model(&Room{}).AddForeignKey("level_id", "levels(id)", "RESTRICT", "RESTRICT")
+	// Customer + Room
+	db.Model(&CustomerRoom{}).AddForeignKey("customer_id", "Customers(id)", "RESTRICT", "RESTRICT")
+	db.Model(&CustomerRoom{}).AddForeignKey("room_id", "Rooms(id)", "RESTRICT", "RESTRICT")
 }
 
 func initDatabase() {
@@ -81,5 +89,34 @@ func initDatabase() {
 			IsActive: &isActice,
 		}
 		db.Create(&rent)
+	}
+	// CustomerRoomStatus
+	{
+		waitingIn := "waiting_in"
+		online := "online"
+		waitingOut := "waiting_out"
+		offline := "offline"
+
+		waitingInStatus := CustomerRoomStatus{
+			ID:   1,
+			Name: &waitingIn,
+		}
+		onlineStatus := CustomerRoomStatus{
+			ID:   2,
+			Name: &online,
+		}
+		waitingOutStatus := CustomerRoomStatus{
+			ID:   3,
+			Name: &waitingOut,
+		}
+		offlineStatus := CustomerRoomStatus{
+			ID:   4,
+			Name: &offline,
+		}
+
+		db.Create(&waitingInStatus)
+		db.Create(&onlineStatus)
+		db.Create(&waitingOutStatus)
+		db.Create(&offlineStatus)
 	}
 }
