@@ -11,6 +11,6 @@
       "port": "3306",
       "user": "root",
       "pass": "Root1234",
-      "name": "pd_dome_db"
+      "name": "pd_dorm_db"
   }
 }

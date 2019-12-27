@@ -22,17 +22,15 @@ func (m *mysqlCustomerRepository) Fetch(offset int, limit int) ([]*models.Custom
 	}
 	// db := m.Conn.Limit(limit).Offset(offset).Find(&customers)
 	db := m.Conn.Find(&customers)
-
 	if db.Error != nil {
 		return nil, db.Error
 	}
 	return customers, nil
 }
 
-func (m *mysqlCustomerRepository) GetByID(id int) (*models.Customer, error) {
+func (m *mysqlCustomerRepository) GetByID(id uint32) (*models.Customer, error) {
 	customer := models.Customer{}
 	db := m.Conn.First(&customer, id)
-
 	if db.Error != nil {
 		return nil, db.Error
 	}
@@ -40,8 +38,7 @@ func (m *mysqlCustomerRepository) GetByID(id int) (*models.Customer, error) {
 }
 
 func (m *mysqlCustomerRepository) Create(ctm *models.Customer) error {
-	db := m.Conn.Create(ctm)
-
+	db := m.Conn.Create(&ctm)
 	if db.Error != nil {
 		return db.Error
 	}
@@ -49,17 +46,15 @@ func (m *mysqlCustomerRepository) Create(ctm *models.Customer) error {
 }
 
 func (m *mysqlCustomerRepository) Update(ctm *models.Customer) error {
-	db := m.Conn.Model(ctm).Updates(ctm)
-
+	db := m.Conn.Model(&ctm).Updates(&ctm)
 	if db.Error != nil {
 		return db.Error
 	}
 	return nil
 }
 
-func (m *mysqlCustomerRepository) Delete(id int) error {
+func (m *mysqlCustomerRepository) Delete(id uint32) error {
 	db := m.Conn.Where("id = ?", id).Delete(&models.Customer{})
-
 	if db.Error != nil {
 		return db.Error
 	}

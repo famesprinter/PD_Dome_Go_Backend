@@ -37,7 +37,7 @@ func (ctm *customerUsecase) Fetch(ctx context.Context, offset int, limit int) ([
 	return customers, &nextOffset, nil
 }
 
-func (ctm *customerUsecase) GetByID(ctx context.Context, id int) (*models.Customer, error) {
+func (ctm *customerUsecase) GetByID(ctx context.Context, id uint32) (*models.Customer, error) {
 	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
 	defer cancel()
 
@@ -70,7 +70,7 @@ func (ctm *customerUsecase) Update(ctx context.Context, c *models.Customer) erro
 	return nil
 }
 
-func (ctm *customerUsecase) Delete(ctx context.Context, id int) error {
+func (ctm *customerUsecase) Delete(ctx context.Context, id uint32) error {
 	ctx, cancel := context.WithTimeout(ctx, ctm.contextTimeout)
 	defer cancel()
 

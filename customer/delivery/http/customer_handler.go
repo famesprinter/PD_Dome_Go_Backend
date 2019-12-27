@@ -59,7 +59,8 @@ func (ctm *CustomerHandler) FetchCustomer(c echo.Context) error {
 
 // GetByID will fetch the customer based on customer id
 func (ctm *CustomerHandler) GetByID(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
+	u64, _ := strconv.ParseUint(c.Param("id"), 2, 32)
+	id := uint32(u64)
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -90,7 +91,6 @@ func (ctm *CustomerHandler) Create(c echo.Context) error {
 			Message: err.Error(),
 		})
 	}
-
 	if ok, err := isRequestValid(&customer); !ok {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -98,7 +98,6 @@ func (ctm *CustomerHandler) Create(c echo.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-
 	err = ctm.CUsecase.Create(ctx, &customer)
 
 	if err != nil {
@@ -118,7 +117,8 @@ func (ctm *CustomerHandler) Create(c echo.Context) error {
 // Update will create the customer by given request body
 func (ctm *CustomerHandler) Update(c echo.Context) error {
 	var customer models.Customer
-	id, _ := strconv.Atoi(c.Param("id"))
+	u64, _ := strconv.ParseUint(c.Param("id"), 2, 32)
+	id := uint32(u64)
 	err := c.Bind(&customer)
 	if err != nil {
 		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{
@@ -153,7 +153,8 @@ func (ctm *CustomerHandler) Update(c echo.Context) error {
 // Delete will delelete the customer by given request body
 func (ctm *CustomerHandler) Delete(c echo.Context) error {
 	var customer models.Customer
-	id, _ := strconv.Atoi(c.Param("id"))
+	u64, _ := strconv.ParseUint(c.Param("id"), 2, 32)
+	id := uint32(u64)
 	err := c.Bind(&customer)
 	if err != nil {
 		return c.JSON(utils.GetStatusCode(err), utils.ResponseError{

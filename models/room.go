@@ -4,12 +4,16 @@ import "time"
 
 // Room represent the Room model
 type Room struct {
-	ID             int       `gorm:"primary_key;index;AUTO_INCREMENT" json:"id"`
-	RoomNumber     string    `json:"roomNumber,omitempty"`
-	RendID         int       `gorm:"ForeignKey" json:"rendID,omitempty"`
-	InsuranceFeeID int       `gorm:"ForeignKey" json:"insuranceFeeID,omitempty"`
-	LevelID        int       `gorm:"ForeignKey" json:"levelID,omitempty"`
-	CreatedAt      time.Time `gorm:"DEFAULT:now()" json:"createdAt,omitempty"`
-	UpdatedAt      time.Time `gorm:"DEFAULT:now()" json:"updatedAt"`
-	DeletedAt      time.Time `gorm:"DEFAULT:now()" json:"deletedAt"`
+	ID             uint32     `gorm:"primary_key;index;AUTO_INCREMENT" json:"id"`
+	RoomNumber     *string    `gorm:"TYPE:varchar(45);NOT NULL" json:"roomNumber,omitempty"`
+	RentID         *uint32    `gorm:"NOT NULL" json:"rentID,omitempty"`
+	InsuranceFeeID *uint32    `gorm:"NOT NULL" json:"insuranceFeeID,omitempty"`
+	LevelID        *uint32    `gorm:"NOT NULL" json:"levelID,omitempty"`
+	CreatedAt      *time.Time `gorm:"DEFAULT:now()" json:"createdAt,omitempty"`
+	UpdatedAt      *time.Time `gorm:"DEFAULT:now()" json:"updatedAt,omitempty"`
+	DeletedAt      *time.Time `json:"deletedAt,omitempty"`
+
+	Rent *Rent
+	InsuranceFee *InsuranceFee
+	Level *Level
 }
