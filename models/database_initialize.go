@@ -62,6 +62,11 @@ func autoMigrate() {
 	// Customer + Room
 	db.AutoMigrate(&CustomerRoom{})
 	db.AutoMigrate(&CustomerRoomStatus{})
+	// Receipt
+	db.AutoMigrate(&Receipt{})
+	db.AutoMigrate(&ReceiptStatus{})
+	db.AutoMigrate(&ElectricUnitCal{})
+	db.AutoMigrate(&WaterUnitCal{})
 }
 
 func addForeignKey() {
@@ -72,8 +77,13 @@ func addForeignKey() {
 	db.Model(&Room{}).AddForeignKey("insurance_fee_id", "insurance_fees(id)", "RESTRICT", "RESTRICT")
 	db.Model(&Room{}).AddForeignKey("level_id", "levels(id)", "RESTRICT", "RESTRICT")
 	// Customer + Room
-	db.Model(&CustomerRoom{}).AddForeignKey("customer_id", "Customers(id)", "RESTRICT", "RESTRICT")
-	db.Model(&CustomerRoom{}).AddForeignKey("room_id", "Rooms(id)", "RESTRICT", "RESTRICT")
+	db.Model(&CustomerRoom{}).AddForeignKey("customer_id", "customers(id)", "RESTRICT", "RESTRICT")
+	db.Model(&CustomerRoom{}).AddForeignKey("room_id", "rooms(id)", "RESTRICT", "RESTRICT")
+	// Receipt
+	db.Model(&Receipt{}).AddForeignKey("receipt_status_id", "receipt_statuses(id)", "RESTRICT", "RESTRICT")
+	db.Model(&Receipt{}).AddForeignKey("room_id", "rooms(id)", "RESTRICT", "RESTRICT")
+	db.Model(&Receipt{}).AddForeignKey("electric_unit_cal_id", "electric_unit_cals(id)", "RESTRICT", "RESTRICT")
+	db.Model(&Receipt{}).AddForeignKey("water_unit_cal_id", "water_unit_cals(id)", "RESTRICT", "RESTRICT")
 }
 
 func initDatabase() {
@@ -118,5 +128,21 @@ func initDatabase() {
 		db.Create(&onlineStatus)
 		db.Create(&waitingOutStatus)
 		db.Create(&offlineStatus)
+	}
+	// ReceiptStatus
+	{
+		unpaid := "unpaid"
+		paid := "paid"
+
+		receiptUnPaidStatus := ReceiptStatus{
+			ID:   1,
+			Name: &unpaid,
+		}
+		receiptPaidStatus := ReceiptStatus{
+			ID:   2,
+			Name: &paid,
+		}
+		db.Create(&receiptUnPaidStatus)
+		db.Create(&receiptPaidStatus)
 	}
 }
